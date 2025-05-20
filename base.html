@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div id="repos"></div>
+
+<script>
+  const username = "leathe-dev";
+  fetch(`https://api.github.com/users/${username}/repos`)
+    .then(res => res.json())
+    .then(repos => {
+      const container = document.getElementById("repos");
+      repos.forEach(repo => {
+        const box = document.createElement("div");
+        box.className = "repo-box";
+        box.innerHTML = `
+          <a class="redirect" href="${repo.html_url}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+          <a href="${repo.html_url}" target="_blank">${username} / ${repo.name}</a>
+          <p class="repo-desc">${repo.description || "No description"}</p>
+        `;
+        container.appendChild(box);
+      });
+    });
+</script>
