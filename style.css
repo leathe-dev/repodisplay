@@ -49,8 +49,8 @@
 }
 
 .repo-header img {
-  width: 10px;
-  height: 10px;
+  width: 24px;
+  height: 24px;
   object-fit: cover;
   border-radius: 4px;
   flex-shrink: 0;
