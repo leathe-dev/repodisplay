@@ -1,26 +1,22 @@
-(function () {
-  const scriptTag = document.currentScript;
-  const username = scriptTag.getAttribute("data-username");
-  const containerId = scriptTag.getAttribute("data-container") || "github-repos";
+const username = 'USERNAME HERE';
+    const reposContainer = document.getElementById('github-repos');
 
-  const container = document.getElementById(containerId);
-  if (!container || !username) return;
-
-  fetch(`https://api.github.com/users/${username}/repos`)
-    .then(res => res.json())
-    .then(repos => {
-      repos.forEach(repo => {
-        const box = document.createElement("div");
-        box.className = "repo-box";
-        box.innerHTML = `
-          <a class="redirect" href="${repo.html_url}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
-          <div class="repo-header">
-            <img src="https://opengraph.githubassets.com/1/${username}/${repo.name}" alt="${repo.name} preview">
-            <a href="${repo.html_url}" target="_blank">${username} / ${repo.name}</a>
+    fetch(`https://api.github.com/users/${username}/repos?sort=updated`)
+      .then(response => response.json())
+      .then(repos => {
+        if (!Array.isArray(repos)) {
+          reposContainer.textContent = 'Error fetching repos.';
+          return;
+        }
+        reposContainer.innerHTML = repos.map(repo => `
+          <div class="repo-box">
+            <img src="${repo.owner.avatar_url}" alt="avatar" class="avatar-icon">
+            <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">${repo.name}</a>
+            <p class="repo-desc">${repo.description || 'No description'}</p>
+            <span class="redirect">↗</span>
           </div>
-          <p class="repo-desc">${repo.description || "No description"}</p>
-        `;
-        container.appendChild(box);
+        `).join('');
+      })
+      .catch(() => {
+        reposContainer.textContent = 'Failed to load repos.';
       });
-    });
-})();
