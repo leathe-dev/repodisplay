@@ -1,52 +1,89 @@
-<div id="github-repos"></div>
-<script 
-  src="https://leathe-dev.github.io/repo/github-repo.js" 
-  data-username="USERNAME HERE"
-  data-container="github-repos">
-</script>
-
 <style>
-  /* change this to whatever you like */
-.repo-box {
-  position: relative;
-  border: 2px solid #2b2b2b;
-  border-radius: 4px;
-  padding: 12px;
-  margin: 10px;
-  width: 300px;
-  background-color: #202020;
-  font-family: monospace;
-  transition: all 0.2s;
-}
+    #github-repos {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    
+    .repo-box {
+      position: relative;
+      border: 2px solid #2b2b2b;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px;
+      width: 300px;
+      background-color: #202020;
+      font-family: monospace;
+      transition: all 0.2s;
+    }
 
-.repo-box:hover {
-  box-shadow: 0 0 4px #535353;
-  border: solid 1px #535353;
-  transform: scale(1.02);
-}
+    .repo-box:hover {
+      box-shadow: 0 0 4px #535353;
+      border: solid 1px #535353;
+      transform: scale(1.02);
+    }
 
-.repo-box a {
-  color: #ddd;
-  text-decoration: none;
-  font-weight: bold;
-}
+    .repo-box a {
+      color: #ddd;
+      text-decoration: none;
+      font-weight: bold;
+      display: block;
+      padding-left: 34px;
+    }
 
-.repo-box a:hover {
-  color: #f3f3f3;
-  text-decoration: none;
-  font-weight: bold;
-}
+    .repo-box a:hover {
+      color: #f3f3f3;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
-.redirect {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  color: white;
-}
+    .redirect {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      color: white;
+    }
 
-.repo-desc {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #ccc;
-}
-</style>
+    .repo-desc {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #ccc;
+      padding-left: 34px;
+    }
+
+    .avatar-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      border: 1px solid #444;
+    }
+  </style>
+
+  <div id="github-repos"></div>
+
+  <script>
+    const username = '	USERNAME HERE';
+    const reposContainer = document.getElementById('github-repos');
+
+    fetch(`https://api.github.com/users/${username}/repos?sort=updated`)
+      .then(response => response.json())
+      .then(repos => {
+        if (!Array.isArray(repos)) {
+          reposContainer.textContent = 'Error fetching repos.';
+          return;
+        }
+        reposContainer.innerHTML = repos.map(repo => `
+          <div class="repo-box">
+            <img src="${repo.owner.avatar_url}" alt="avatar" class="avatar-icon">
+            <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">${repo.name}</a>
+            <p class="repo-desc">${repo.description || 'No description'}</p>
+            <span class="redirect">↗</span>
+          </div>
+        `).join('');
+      })
+      .catch(() => {
+        reposContainer.textContent = 'Failed to load repos.';
+      });
+</script>
